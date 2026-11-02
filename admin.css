@@ -114,6 +114,34 @@ h1, h2 {
   text-decoration: none;
 }
 
+.otp-notice {
+  padding: 0.85rem 1rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-block-end: 1.15rem;
+  font-size: 0.94rem;
+  color: var(--text-secondary);
+}
+
+.otp-notice p {
+  margin: 0;
+}
+
+.otp-input {
+  text-align: center;
+  font-size: 1.45rem !important;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+}
+
+.otp-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-start: 1rem;
+}
+
 /* Dashboard Layout */
 .admin-container {
   inline-size: min(920px, 100% - 2rem);

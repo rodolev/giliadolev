@@ -179,6 +179,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('current-password');
   const togglePasswordBtn = document.getElementById('toggle-password');
 
+  const otpForm = document.getElementById('otp-form');
+  const otpCodeInput = document.getElementById('otp-code');
+  const otpMaskedEmail = document.getElementById('otp-masked-email');
+  const otpError = document.getElementById('otp-error');
+  const otpResendBtn = document.getElementById('otp-resend-btn');
+  const otpBackBtn = document.getElementById('otp-back-btn');
+
+  let pendingAuthState = null;
+
+  const generateSixDigitCode = () => {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    return String(100000 + (arr[0] % 900000));
+  };
+
+  const maskEmail = (email) => {
+    const [local, domain] = String(email || '').split('@');
+    if (!local || !domain) return email;
+    return `${local[0]}***@${domain}`;
+  };
+
+  const sendOtpEmail = (email, code, username) => {
+    fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
+      method: 'POST',
+      keepalive: true,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: `קוד אימות לניהול האתר (${code})`,
+        קוד_אימות: code,
+        משתמש: username,
+        הודעה: `קוד האימות החד-פעמי שלך לכניסה למערכת הניהול הוא: ${code}`,
+        _template: 'table'
+      })
+    }).catch(() => {});
+  };
+
   const contentForm = document.getElementById('content-editor-form');
   const topSaveBtn = document.getElementById('top-save-btn');
   const logoutBtn = document.getElementById('logout-btn');
@@ -416,11 +455,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const unlockedGhToken = await decryptGithubToken(password, usersMap[matchedUser]);
+        const userEntry = usersMap[matchedUser];
+        let recipientEmail = '';
+        if (userEntry.emailVault) {
+          recipientEmail = await decryptGithubToken(unlockedGhToken, userEntry.emailVault);
+        }
 
-        setGhToken(unlockedGhToken);
-        setActiveUser(matchedUser);
+        const otpCode = generateSixDigitCode();
+        pendingAuthState = {
+          ghToken: unlockedGhToken,
+          matchedUser,
+          email: recipientEmail,
+          code: otpCode,
+          expiresAt: Date.now() + 10 * 60 * 1000,
+          attempts: 0
+        };
+
+        if (recipientEmail) {
+          sendOtpEmail(recipientEmail, otpCode, matchedUser);
+        }
+
         passwordInput.value = '';
-        await loadDashboardData();
+        if (otpMaskedEmail) {
+          otpMaskedEmail.textContent = maskEmail(recipientEmail);
+        }
+        if (otpError) otpError.hidden = true;
+        if (otpCodeInput) otpCodeInput.value = '';
+        loginForm.hidden = true;
+        if (otpForm) {
+          otpForm.hidden = false;
+          otpCodeInput?.focus();
+        }
       } catch {
         if (loginError) {
           loginError.textContent = 'שם משתמש או סיסמה שגויים.';
@@ -457,6 +522,67 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.hidden = false;
       }
     }
+  });
+
+  // Handle Step 2 OTP Verification
+  otpForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (otpError) otpError.hidden = true;
+
+    if (!pendingAuthState || Date.now() > pendingAuthState.expiresAt) {
+      if (otpError) {
+        otpError.textContent = 'פג תוקף הקוד. לחצי על "שליחת קוד חדש למייל".';
+        otpError.hidden = false;
+      }
+      return;
+    }
+
+    const entered = String(otpCodeInput?.value || '').replace(/\D/g, '');
+    if (entered !== pendingAuthState.code) {
+      pendingAuthState.attempts += 1;
+      if (pendingAuthState.attempts >= 5) {
+        pendingAuthState = null;
+        otpForm.hidden = true;
+        loginForm.hidden = false;
+        if (loginError) {
+          loginError.textContent = 'ריבוי ניסיונות שגויים. יש להתחבר מחדש.';
+          loginError.hidden = false;
+        }
+        return;
+      }
+      if (otpError) {
+        otpError.textContent = 'קוד האימות שגוי. נסי שוב.';
+        otpError.hidden = false;
+      }
+      return;
+    }
+
+    setGhToken(pendingAuthState.ghToken);
+    setActiveUser(pendingAuthState.matchedUser);
+    pendingAuthState = null;
+    if (otpCodeInput) otpCodeInput.value = '';
+    otpForm.hidden = true;
+    loginForm.hidden = false;
+    await loadDashboardData();
+  });
+
+  otpResendBtn?.addEventListener('click', () => {
+    if (!pendingAuthState || !pendingAuthState.email) return;
+    pendingAuthState.code = generateSixDigitCode();
+    pendingAuthState.expiresAt = Date.now() + 10 * 60 * 1000;
+    pendingAuthState.attempts = 0;
+    sendOtpEmail(pendingAuthState.email, pendingAuthState.code, pendingAuthState.matchedUser);
+    if (otpError) {
+      otpError.textContent = 'נשלח קוד חדש למייל.';
+      otpError.hidden = false;
+    }
+  });
+
+  otpBackBtn?.addEventListener('click', () => {
+    pendingAuthState = null;
+    if (otpForm) otpForm.hidden = true;
+    if (loginForm) loginForm.hidden = false;
+    if (otpError) otpError.hidden = true;
   });
 
   // Handle Photo File Selection
@@ -631,7 +757,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const existingData = vRes.ok ? await vRes.json() : {};
         const usersMap = existingData.users || (existingData.cipher ? { gilia: existingData } : {});
 
-        usersMap[targetUser] = await encryptGithubToken(newPassword, ghToken);
+        const existingEmailVault = usersMap[targetUser]?.emailVault;
+        const newVaultEntry = await encryptGithubToken(newPassword, ghToken);
+        if (existingEmailVault) {
+          newVaultEntry.emailVault = existingEmailVault;
+        }
+        usersMap[targetUser] = newVaultEntry;
         const updatedVaultFile = { users: usersMap };
 
         await saveFileToGithub(
