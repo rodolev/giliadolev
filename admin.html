@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול האתר | גיליה דולב</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css?v=2">
+</head>
+<body>
+  <!-- Sign-In View (Placed at the top so mobile keyboards do not obstruct the submit button) -->
+  <main id="login-view" class="login-wrapper">
+    <section class="login-card" aria-labelledby="login-heading">
+      <div class="login-header">
+        <h1 id="login-heading">כניסה לניהול האתר</h1>
+        <p>גיליה דולב · עריכת תוכן האתר וצפייה בפניות</p>
+      </div>
+
+      <form id="login-form" action="/api/login" method="POST">
+        <div class="form-group">
+          <label for="username">שם משתמש</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            autocomplete="username"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            enterkeyhint="next"
+            value="gilia"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <div class="password-label-row">
+            <label for="current-password">סיסמה</label>
+            <button
+              type="button"
+              id="toggle-password"
+              class="btn-text-toggle"
+              aria-pressed="false"
+              aria-label="הצגת סיסמה"
+            >
+              הצגת סיסמה
+            </button>
+          </div>
+          <input
+            type="password"
+            id="current-password"
+            name="password"
+            autocomplete="current-password"
+            enterkeyhint="done"
+            required
+          >
+        </div>
+
+        <div id="login-error" class="alert alert-error" role="alert" hidden></div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+          כניסה למערכת הניהול
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="index.html">← חזרה לעמוד הבית</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Admin Dashboard View -->
+  <div id="dashboard-view" class="dashboard-wrapper" hidden>
+    <header class="admin-header">
+      <div class="admin-container admin-header-inner">
+        <div>
+          <strong>ניהול האתר · גיליה דולב</strong>
+          <span class="header-sub">כל שינוי נשמר ומתעדכן מיד באתר</span>
+        </div>
+        <div class="admin-header-actions">
+          <a href="index.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            צפייה באתר ↗
+          </a>
+          <button type="button" id="top-save-btn" class="btn btn-primary">
+            שמירת שינויים
+          </button>
+          <button type="button" id="logout-btn" class="btn btn-ghost">
+            התנתקות
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-container admin-main">
+      <div id="save-toast" class="save-toast" role="status" aria-live="polite" hidden></div>
+
+      <form id="content-editor-form" class="editor-grid">
+        <!-- Section 1: Basic Info & Phone -->
+        <section class="editor-card" aria-labelledby="sec-basic">
+          <h2 id="sec-basic">1. פרטים כלליים וטלפון</h2>
+          <div class="fields-row">
+            <div class="form-group">
+              <label for="edit-brandName">שם בראש האתר</label>
+              <input type="text" id="edit-brandName" name="brandName" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-brandRole">תיאור קצר מתחת לשם</label>
+              <input type="text" id="edit-brandRole" name="brandRole" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-phoneDisplay">מספר טלפון (לוואטסאפ ולשיחות)</label>
+              <input type="tel" id="edit-phoneDisplay" name="phoneDisplay" dir="ltr" required>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Hero Section -->
+        <section class="editor-card" aria-labelledby="sec-hero">
+          <h2 id="sec-hero">2. חלק עליון (פתיחה ותמונה)</h2>
+          <div class="form-group">
+            <label for="edit-heroEyebrow">שורת כותרת קטנה מעל הכותרת הראשית</label>
+            <input type="text" id="edit-heroEyebrow" name="heroEyebrow">
+          </div>
+          <div class="form-group">
+            <label for="edit-heroTitle">כותרת ראשית גדולה</label>
+            <input type="text" id="edit-heroTitle" name="heroTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-heroLead">פסקת פתיחה</label>
+            <textarea id="edit-heroLead" name="heroLead" rows="3" required></textarea>
+          </div>
+          <div class="fields-row">
+            <div class="form-group">
+              <label for="edit-heroWhatsappBtn">טקסט כפתור וואטסאפ ראשי</label>
+              <input type="text" id="edit-heroWhatsappBtn" name="heroWhatsappBtn">
+            </div>
+            <div class="form-group">
+              <label for="edit-heroContactBtn">טקסט כפתור שני</label>
+              <input type="text" id="edit-heroContactBtn" name="heroContactBtn">
+            </div>
+          </div>
+
+          <div class="photo-upload-box">
+            <div class="photo-preview-wrap">
+              <img id="admin-photo-preview" src="assets/gilia-dolev.jpg" alt="תצוגה מקדימה של תמונת האתר" width="110" height="128">
+            </div>
+            <div class="photo-upload-controls">
+              <label for="photo-file-input" class="photo-upload-label">החלפת תמונה באתר</label>
+              <p class="field-hint">בחרי תמונה חדשה מהמחשב או מהטלפון (JPG או PNG) והיא תתעדכן באתר עם השמירה.</p>
+              <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp">
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: About & Home Visit -->
+        <section class="editor-card" aria-labelledby="sec-about">
+          <h2 id="sec-about">3. נעים להכיר ופירוט ביקור הבית</h2>
+          <div class="form-group">
+            <label for="edit-aboutHeading">כותרת אודות</label>
+            <input type="text" id="edit-aboutHeading" name="aboutHeading" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-aboutParagraph1">פסקה ראשונה</label>
+            <textarea id="edit-aboutParagraph1" name="aboutParagraph1" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-aboutParagraph2">פסקה שנייה</label>
+            <textarea id="edit-aboutParagraph2" name="aboutParagraph2" rows="2" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-qualificationsHeading">כותרת הכשרה והסמכות</label>
+            <input type="text" id="edit-qualificationsHeading" name="qualificationsHeading" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-qualificationsBullets">נקודות הכשרה והסמכות (כל שורה מוצגת כנקודה נפרדת)</label>
+            <textarea id="edit-qualificationsBullets" name="qualificationsBullets" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-visitHeading">כותרת תיבת פירוט הביקור</label>
+            <input type="text" id="edit-visitHeading" name="visitHeading" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-visitBullets">נקודות "מה כולל ביקור הבית?" (כל שורה מוצגת כנקודה נפרדת)</label>
+            <textarea id="edit-visitBullets" name="visitBullets" rows="5" required></textarea>
+          </div>
+        </section>
+
+        <!-- Section 4: Contact & Footer -->
+        <section class="editor-card" aria-labelledby="sec-contact">
+          <h2 id="sec-contact">4. יצירת קשר וכותרת תחתונה</h2>
+          <div class="form-group">
+            <label for="edit-contactHeading">כותרת אזור יצירת קשר</label>
+            <input type="text" id="edit-contactHeading" name="contactHeading" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-contactSubtitle">משפט מתחת לכותרת יצירת קשר</label>
+            <input type="text" id="edit-contactSubtitle" name="contactSubtitle">
+          </div>
+          <div class="form-group">
+            <label for="edit-footerCopy">שורת זכויות יוצרים בתחתית העמוד</label>
+            <input type="text" id="edit-footerCopy" name="footerCopy">
+          </div>
+
+          <div class="bottom-save-bar">
+            <button type="submit" id="bottom-save-btn" class="btn btn-primary btn-lg">
+              שמירת כל השינויים באתר
+            </button>
+          </div>
+        </section>
+      </form>
+
+      <!-- Section 5: Inquiries / Leads from the Website -->
+      <section class="editor-card" aria-labelledby="sec-leads">
+        <div class="card-header-flex">
+          <h2 id="sec-leads">פניות שהתקבלו מטופס האתר</h2>
+          <button type="button" id="refresh-leads-btn" class="btn btn-secondary btn-sm">רענון רשימה</button>
+        </div>
+        <div id="leads-container" class="leads-list">
+          <p class="empty-leads">עדיין לא התקבלו פניות דרך הטופס באתר.</p>
+        </div>
+      </section>
+
+      <!-- Section 6: Change Password -->
+      <section class="editor-card" aria-labelledby="sec-password">
+        <h2 id="sec-password">שינוי סיסמת ניהול</h2>
+        <form id="password-form" class="fields-row">
+          <div class="form-group">
+            <label for="new-password">סיסמה חדשה (לפחות 6 תווים)</label>
+            <input
+              type="password"
+              id="new-password"
+              name="newPassword"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
+          </div>
+          <div class="form-group password-submit-wrap">
+            <button type="submit" class="btn btn-secondary">עדכון סיסמה</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="admin.js?v=3" defer></script>
+</body>
+</html>

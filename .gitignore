@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+data/auth.json
+data/leads.json
+data/recovery-vault.json
+assets/gilia-dolev-full.jpg

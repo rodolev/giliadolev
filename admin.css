@@ -1,0 +1,379 @@
+/* ==========================================================================
+   Gilia Dolev | Website Admin Dashboard Stylesheet
+   ========================================================================== */
+
+:root {
+  --bg-primary: #FBF8F4;
+  --bg-secondary: #F4EDE4;
+  --bg-card: #FFFFFF;
+  --text-primary: #2A2421;
+  --text-secondary: #5A4F4A;
+  --text-muted: #7A6E68;
+  --accent-primary: #B86B52;
+  --accent-primary-hover: #9C553E;
+  --accent-sage: #5F7464;
+  --border-subtle: #E6DCD1;
+  --error-color: #C52828;
+  --error-bg: #FDF1F0;
+  --success-bg: #E6F2EA;
+  --success-text: #1F5733;
+
+  --font-display: 'Frank Ruhl Libre', Georgia, serif;
+  --font-sans: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 4px 16px rgba(42, 36, 33, 0.05);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+h1, h2 {
+  font-family: var(--font-display);
+  margin-block-start: 0;
+  text-wrap: balance;
+}
+
+/* Sign-In Layout (positioned near the top so mobile keyboards don't cover buttons) */
+.login-wrapper {
+  min-block-size: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-block-start: clamp(2rem, 8vh, 5rem);
+  padding-inline: 1.25rem;
+}
+
+.login-card {
+  inline-size: min(420px, 100%);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.login-header h1 {
+  font-size: 1.75rem;
+  margin-block-end: 0.25rem;
+}
+
+.login-header p {
+  margin-block: 0 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.password-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 0.35rem;
+}
+
+.password-label-row label {
+  margin-block-end: 0 !important;
+}
+
+.btn-text-toggle {
+  background: none;
+  border: 0;
+  color: var(--accent-primary);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+}
+
+.login-footer {
+  margin-block-start: 1.5rem;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.login-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+/* Dashboard Layout */
+.admin-container {
+  inline-size: min(920px, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.admin-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  background-color: rgba(251, 248, 244, 0.95);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid var(--border-subtle);
+  padding-block: 0.75rem;
+}
+
+.admin-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-sub {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.admin-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.admin-main {
+  padding-block: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editor-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: var(--shadow-sm);
+}
+
+.editor-card h2 {
+  font-size: 1.35rem;
+  margin-block-end: 1.25rem;
+  padding-block-end: 0.65rem;
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.fields-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.form-group {
+  margin-block-end: 1.15rem;
+}
+
+.form-group label,
+.photo-upload-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-block-end: 0.35rem;
+}
+
+.field-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-block: 0 0.5rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  inline-size: 100%;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  min-block-size: 48px;
+  padding: 0.65rem 0.85rem;
+  border: 1.5px solid #C8BCB2;
+  border-radius: var(--radius-sm);
+  background-color: #FFFFFF;
+  color: var(--text-primary);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+/* Photo upload preview */
+.photo-upload-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.15rem;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  border: 1px dashed #C8BCB2;
+}
+
+.photo-preview-wrap img {
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.photo-upload-controls {
+  flex: 1;
+  min-inline-size: 220px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.96rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-block {
+  inline-size: 100%;
+}
+
+.btn-lg {
+  min-block-size: 50px;
+  padding-inline: 2rem;
+  font-size: 1.05rem;
+}
+
+.btn-sm {
+  min-block-size: 36px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.88rem;
+}
+
+/* Alerts & Save Toast */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-block-end: 1rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.alert-error {
+  background-color: var(--error-bg);
+  color: var(--error-color);
+}
+
+.save-toast {
+  position: sticky;
+  inset-block-start: 4.75rem;
+  z-index: 15;
+  padding: 0.9rem 1.25rem;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #B7D9C2;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Leads Section */
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 1rem;
+  padding-block-end: 0.65rem;
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.card-header-flex h2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.leads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lead-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.lead-meta {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.lead-notes {
+  margin-block: 0.25rem 0;
+  color: var(--text-secondary);
+}
+
+.lead-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.password-submit-wrap {
+  display: flex;
+  align-items: flex-end;
+}

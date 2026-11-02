@@ -1,0 +1,10 @@
+{
+  "name": "gilia-dolev-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website and lightweight admin panel for Gilia Dolev, Breastfeeding Consultant",
+  "scripts": {
+    "start": "node server.js",
+    "sync": "git pull --rebase origin main"
+  }
+}
